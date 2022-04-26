@@ -90,7 +90,8 @@ public class HomeActivity extends BaseActivity {
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
 
-        tvBusinessTitle.setText(get);
+        // store title
+        //tvBusinessTitle.setText("");
 
         mSettingsImg.setOnClickListener(v -> {
             startActivity(new Intent(HomeActivity.this,SettingsActivity.class));
