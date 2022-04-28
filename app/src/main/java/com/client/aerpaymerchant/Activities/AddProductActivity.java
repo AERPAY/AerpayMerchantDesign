@@ -74,6 +74,9 @@ public class AddProductActivity extends BaseActivity {
     @BindView(R.id.et_product_desc)
     EditText mEtPDesc;
 
+    @BindView(R.id.edtMinOrderQty)
+    EditText mEtMinQty;
+
     BottomSheetDialog dialog, qtyDialog,sizeDialog;
 
     @BindView(R.id.mSizeLl)
@@ -174,47 +177,48 @@ public class AddProductActivity extends BaseActivity {
         HashMap<String, String> object = new HashMap<>();
         HashMap<String, File> files = new HashMap<>();
 
-        if (pathsList.length() > 0)
+        if (pathsList.length() > 0) {
             files.put("images", new File(pathsList));
+            object.put("title", mEtPName.getText().toString());
+            object.put("category_id", "1");
+            object.put("price", mEtPrice.getText().toString());
+            object.put("sale_price", mEtPrice.getText().toString());
+            object.put("quantity", "1");
+            object.put("size", mEtqtyAvailable.getText().toString());
+            object.put("description", mEtPDesc.getText().toString());
+            object.put("store_id", getStoreId());
+            object.put("id", "1");
+            object.put("min_quantity", mEtMinQty.getText().toString());
 
 
-        object.put("title", mEtPName.getText().toString());
-        object.put("category_id", "1");
-        object.put("price", mEtPrice.getText().toString());
-        object.put("sale_price", mEtPrice.getText().toString());
-        object.put("quantity","1");
-        object.put("size", mEtqtyAvailable.getText().toString());
-        object.put("description", mEtPDesc.getText().toString());
-        object.put("store_id", "1");
-        object.put("id", "1");
-        object.put("min_quantity", "2");
+            new NetworkCall(this)
+                    .setRequestParams(object)
+                    .setFiles(files)
+                    .setEndPoint(APIEndPoints.ADD_PRODUCTS)
+                    .setResponseListener(new RetrofitResponseListener() {
+                        @Override
+                        public void onError(int statusCode, @NonNull String message, @Nullable JSONObject jsonObject) {
+                            hideProgressDialog();
+
+                        }
+
+                        @Override
+                        public void onSuccess(int statusCode, @NonNull JSONObject jsonObject, @NonNull String response) {
+                            Toast.makeText(AddProductActivity.this, "Product Added Successfully!", Toast.LENGTH_LONG).show();
+                            hideProgressDialog();
+                            finish();
+                        }
+
+                        @Override
+                        public void onPreExecute() {
+                            showProgressDialog();
+                        }
 
 
-        new NetworkCall(this)
-                .setRequestParams(object)
-                .setFiles(files)
-                .setEndPoint(APIEndPoints.ADD_PRODUCTS)
-                .setResponseListener(new RetrofitResponseListener() {
-                    @Override
-                    public void onError(int statusCode, @NonNull String message, @Nullable JSONObject jsonObject) {
-                        hideProgressDialog();
-
-                    }
-
-                    @Override
-                    public void onSuccess(int statusCode, @NonNull JSONObject jsonObject, @NonNull String response) {
-                        Toast.makeText(AddProductActivity.this,"Product Added Successfully!",Toast.LENGTH_LONG).show();
-                        hideProgressDialog();
-                        finish();
-                    }
-
-                    @Override
-                    public void onPreExecute() {
-                        showProgressDialog();
-                    }
-
-
-                }).makeCall();
+                    }).makeCall();
+        }else{
+            showToast("please add product Image before adding product");
+        }
 
     }
 

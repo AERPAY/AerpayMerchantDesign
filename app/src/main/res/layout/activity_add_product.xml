@@ -333,6 +333,7 @@
                         app:hintEnabled="false">
 
                         <EditText
+                            android:id="@+id/edtMinOrderQty"
                             android:padding="@dimen/_7sdp"
                             android:maxLength="10"
                             android:background="@drawable/edit_text_bg"

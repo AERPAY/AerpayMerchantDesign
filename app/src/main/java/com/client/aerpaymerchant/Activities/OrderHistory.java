@@ -83,7 +83,7 @@ public class OrderHistory extends BaseActivity {
     private void getOrderHistory(){
         JsonObject object = new JsonObject();
 
-        object.addProperty("user_id", 1);
+        object.addProperty("user_id", getUser().getId());
 
         new NetworkCall(this)
                 .setRequestObject(object)
