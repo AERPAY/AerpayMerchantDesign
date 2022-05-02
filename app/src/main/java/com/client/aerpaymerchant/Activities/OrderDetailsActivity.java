@@ -8,10 +8,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.client.aerpaymerchant.R;
+import com.client.aerpaymerchant.adapters.OrderAdapter;
+import com.client.aerpaymerchant.model.OrderDetailsModel;
 import com.client.aerpaymerchant.model.OrdersResModel;
 import com.client.aerpaymerchant.model.orderdetail.OrderDetail;
+import com.client.aerpaymerchant.model.orderdetail.OrderStoreProduct;
 import com.client.aerpaymerchant.network.APIEndPoints;
 import com.client.aerpaymerchant.network.NetworkCall;
 import com.client.aerpaymerchant.network.listeners.RetrofitResponseListener;
@@ -46,7 +50,13 @@ public class OrderDetailsActivity extends BaseActivity {
     @BindView(R.id.tvTotalOrderPrice)
     TextView tvOrderTotal;
 
+    @BindView(R.id.rv_orderDetail)
+    RecyclerView rvOrderDetail;
+
     String orderId;
+
+    ArrayList<OrderStoreProduct> orderList;
+    static OrderStoreProduct OrderStoreProduct;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +66,7 @@ public class OrderDetailsActivity extends BaseActivity {
 
         orderId = getIntent().getStringExtra("orderId");
 
-        getOrderDetail(orderId);
+        setupData();
 
         mTrackOrderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,6 +75,18 @@ public class OrderDetailsActivity extends BaseActivity {
             }
         });
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getOrderDetail(orderId);
+    }
+
+
+    private void setupData() {
+
+    }
+
 
     private void getOrderDetail(String orderId){
         JsonObject object = new JsonObject();
@@ -127,6 +149,8 @@ public class OrderDetailsActivity extends BaseActivity {
         }
 
         tvCustomerAddress.setText(address);
+        orderList = (ArrayList<OrderStoreProduct>) resModel.getMsg().getOrderStoreProduct();
+
     }
 
 

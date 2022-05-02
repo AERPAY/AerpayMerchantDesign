@@ -77,6 +77,9 @@ public class AddProductActivity extends BaseActivity {
     @BindView(R.id.edtMinOrderQty)
     EditText mEtMinQty;
 
+    @BindView(R.id.imagePathListText)
+    TextView mEtImagePath;
+
     BottomSheetDialog dialog, qtyDialog,sizeDialog;
 
     @BindView(R.id.mSizeLl)
@@ -91,6 +94,8 @@ public class AddProductActivity extends BaseActivity {
     private String pathsList = "";
 
     QtyAdapter qtyAdapter;
+
+    CategoryAdapter categoryAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,21 +159,22 @@ public class AddProductActivity extends BaseActivity {
 
 
     private void setCategoriesMenu() {
+        List<String> categoryList=new ArrayList<>();
+        categoryList.add("Chicken");
+        categoryList.add("Burgers");
+        categoryList.add("Noodles");
+        categoryList.add("French Fries");
+
         View view = getLayoutInflater().inflate(R.layout.menu_products_categories, null);
 
-        /*Button mNewCategoryBtn = view.findViewById(R.id.mNewCategoryBtn);
-        mNewCategoryBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEtPCategory.setEnabled(true);
-                mEtPCategory.setFocusable(true);
-                mEtPCategory.setCursorVisible(true);
-                dialog.dismiss();
-            }
-        });*/
+        RecyclerView categoryRecyclerView=view.findViewById(R.id.categoryRecyclerView);
 
         dialog = new BottomSheetDialog(AddProductActivity.this);
         dialog.setContentView(view);
+
+        categoryAdapter = new CategoryAdapter(AddProductActivity.this, categoryList);
+        categoryRecyclerView.setLayoutManager(new LinearLayoutManager(AddProductActivity.this));
+        categoryRecyclerView.setAdapter(categoryAdapter);
 
     }
 
@@ -183,7 +189,7 @@ public class AddProductActivity extends BaseActivity {
             object.put("category_id", "1");
             object.put("price", mEtPrice.getText().toString());
             object.put("sale_price", mEtPrice.getText().toString());
-            object.put("quantity", "1");
+            object.put("quantity", mEtqtyAvailable.getText().toString());
             object.put("size", mEtqtyAvailable.getText().toString());
             object.put("description", mEtPDesc.getText().toString());
             object.put("store_id", getStoreId());
@@ -235,11 +241,12 @@ public class AddProductActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICKER_REQUEST_CODE && resultCode == Activity.RESULT_OK)
             pathsList = FileUtils.INSTANCE.getPath(this, data.getData()); // return list of selected images paths.
+            mEtImagePath.setText(pathsList);
     }
 
 
 
-    //--------------------------------------Home Adapter-----------------------------------------
+    //--------------------------------------Qty Adapter-----------------------------------------
     public class QtyAdapter extends RecyclerView.Adapter<QtyAdapter.MyViewHolder> {
 
         Context context;
@@ -285,6 +292,61 @@ public class AddProductActivity extends BaseActivity {
         @Override
         public int getItemCount() {
             return childFeedList.size();
+        }
+
+        public class MyViewHolder extends RecyclerView.ViewHolder {
+
+            TextView mNameTv;
+
+
+            public MyViewHolder(View itemView) {
+                super(itemView);
+
+                mNameTv=itemView.findViewById(R.id.mNameTv);
+
+
+
+
+            }
+        }
+    }
+
+    public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyViewHolder> {
+
+        Context context;
+        List<String> categoryList;
+
+        public CategoryAdapter(Context context, List<String > childFeedList) {
+            this.context = context;
+            this.categoryList = childFeedList;
+
+        }
+
+        @NonNull
+        @Override
+        public CategoryAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.menu_qty, parent, false);
+            return new CategoryAdapter.MyViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(CategoryAdapter.MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
+            holder.mNameTv.setText(categoryList.get(position));
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    mEtPCategory.setText(categoryList.get(position));
+                    dialog.dismiss();
+                }
+            });
+
+        }
+
+
+        @Override
+        public int getItemCount() {
+            return categoryList.size();
         }
 
         public class MyViewHolder extends RecyclerView.ViewHolder {
