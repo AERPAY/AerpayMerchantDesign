@@ -8,10 +8,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.client.aerpaymerchant.R;
 import com.client.aerpaymerchant.adapters.OrderAdapter;
+import com.client.aerpaymerchant.adapters.OrderDetailsAdapter;
 import com.client.aerpaymerchant.model.OrderDetailsModel;
 import com.client.aerpaymerchant.model.OrdersResModel;
 import com.client.aerpaymerchant.model.orderdetail.OrderDetail;
@@ -58,6 +60,8 @@ public class OrderDetailsActivity extends BaseActivity {
     ArrayList<OrderStoreProduct> orderList;
     static OrderStoreProduct OrderStoreProduct;
 
+    OrderDetailsAdapter orderDetailsAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,7 +95,7 @@ public class OrderDetailsActivity extends BaseActivity {
     private void getOrderDetail(String orderId){
         JsonObject object = new JsonObject();
 
-        object.addProperty("order_id", orderId);
+        object.addProperty("order_id", 1);
 
         new NetworkCall(this)
                 .setRequestObject(object)
@@ -150,6 +154,16 @@ public class OrderDetailsActivity extends BaseActivity {
 
         tvCustomerAddress.setText(address);
         orderList = (ArrayList<OrderStoreProduct>) resModel.getMsg().getOrderStoreProduct();
+        if (orderList.size() > 0){
+            orderDetailsAdapter = new OrderDetailsAdapter(this,orderList);
+            rvOrderDetail.setLayoutManager(new LinearLayoutManager(OrderDetailsActivity.this));
+            rvOrderDetail.setAdapter(orderDetailsAdapter);
+            orderDetailsAdapter.notifyDataSetChanged();
+        }else{
+            showToast("Unable to fetch items for this product!");
+        }
+
+
 
     }
 

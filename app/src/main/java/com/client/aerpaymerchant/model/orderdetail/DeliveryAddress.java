@@ -11,7 +11,7 @@ public class DeliveryAddress {
     @SerializedName("city")
     private Object mCity;
     @SerializedName("country")
-    private Country mCountry;
+    private String mCountry;
     @SerializedName("created")
     private Object mCreated;
     @SerializedName("default")
@@ -49,11 +49,11 @@ public class DeliveryAddress {
         mCity = city;
     }
 
-    public Country getCountry() {
+    public String getCountry() {
         return mCountry;
     }
 
-    public void setCountry(Country country) {
+    public void setCountry(String country) {
         mCountry = country;
     }
 

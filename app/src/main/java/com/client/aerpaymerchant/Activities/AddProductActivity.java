@@ -4,7 +4,12 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +38,9 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -239,9 +246,28 @@ public class AddProductActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICKER_REQUEST_CODE && resultCode == Activity.RESULT_OK)
+        if (requestCode == PICKER_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             pathsList = FileUtils.INSTANCE.getPath(this, data.getData()); // return list of selected images paths.
             mEtImagePath.setText(pathsList);
+            Uri uri=data.getData();
+            // Initialize bitmap
+            try {
+                Bitmap bitmap= MediaStore.Images.Media.getBitmap(getContentResolver(),uri);
+                // initialize byte stream
+                ByteArrayOutputStream stream=new ByteArrayOutputStream();
+                // compress Bitmap
+                bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream);
+                // Initialize byte array
+                byte[] bytes=stream.toByteArray();
+                // get base64 encoded string
+                String sImage= Base64.encodeToString(bytes,Base64.DEFAULT);
+                // set encoded text on textview
+                Log.e("Base 64", sImage);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
