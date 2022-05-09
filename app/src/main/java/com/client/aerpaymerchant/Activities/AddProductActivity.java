@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -97,6 +99,11 @@ public class AddProductActivity extends BaseActivity {
     @BindView(R.id.addCategory)
     ImageView mAddCategory;
 
+    @BindView((R.id.inventorySwitch))
+    SwitchCompat isInventoryEnable;
+
+    String inventoryStatus = "true";
+
     private int PICKER_REQUEST_CODE = 100;
     private String pathsList = "";
 
@@ -110,6 +117,13 @@ public class AddProductActivity extends BaseActivity {
         setContentView(R.layout.activity_add_product);
         ButterKnife.bind(this);
 
+        isInventoryEnable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                inventoryStatus = Boolean.toString(isChecked);
+            }
+        });
+
         setCategoriesMenu();
 
         setSizeMenu();
@@ -121,6 +135,13 @@ public class AddProductActivity extends BaseActivity {
         mLlQtyType.setOnClickListener(v -> qtyDialog.show());
 
         mSizeLl.setOnClickListener(v -> sizeDialog.show());
+
+        mAddCategory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
 
     }
@@ -202,6 +223,8 @@ public class AddProductActivity extends BaseActivity {
             object.put("store_id", getStoreId());
             object.put("id", "1");
             object.put("min_quantity", mEtMinQty.getText().toString());
+            object.put("is_alert_enable", inventoryStatus);
+
 
 
             new NetworkCall(this)
@@ -248,26 +271,10 @@ public class AddProductActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICKER_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             pathsList = FileUtils.INSTANCE.getPath(this, data.getData()); // return list of selected images paths.
+            Log.e("File path", pathsList);
             mEtImagePath.setText(pathsList);
-            Uri uri=data.getData();
-            // Initialize bitmap
-            try {
-                Bitmap bitmap= MediaStore.Images.Media.getBitmap(getContentResolver(),uri);
-                // initialize byte stream
-                ByteArrayOutputStream stream=new ByteArrayOutputStream();
-                // compress Bitmap
-                bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream);
-                // Initialize byte array
-                byte[] bytes=stream.toByteArray();
-                // get base64 encoded string
-                String sImage= Base64.encodeToString(bytes,Base64.DEFAULT);
-                // set encoded text on textview
-                Log.e("Base 64", sImage);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
+
     }
 
 

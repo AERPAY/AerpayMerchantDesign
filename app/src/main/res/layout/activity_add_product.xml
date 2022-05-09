@@ -376,7 +376,7 @@
                             android:textColor="@android:color/white"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:id="@+id/customSwitch"
+                            android:id="@+id/inventorySwitch"
                             app:track="@drawable/custom_track"
                             android:thumb="@drawable/custom_thumb" />
 

@@ -18,6 +18,8 @@ class APIEndPoints {
         const val ADD_COUPON = "api/AddCouponCode"
         const val STORE_STATS = "api/StoreSalesStats"
         const val ORDER_DETAILS = "api/showOrderDetail"
+        const val ADD_CATEGORY = "api/addCategory"
+        const val SHOW_CATEGORY = "api/showCategory"
 
     }
 }
